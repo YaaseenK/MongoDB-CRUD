@@ -30,4 +30,6 @@ const LoanSchema = new Schema({
     {timestamps:true}
 );
 
-module.exports = model('Loan', LoanSchema);
+const Loan = model('Loan', LoanSchema);
+
+module.exports = Loan;

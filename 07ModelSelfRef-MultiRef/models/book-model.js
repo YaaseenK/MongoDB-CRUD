@@ -36,4 +36,6 @@ const BookSchema = new Schema({
 
 },{ timestamps:true });
 
-module.exports = model('Book', BookSchema)
+const Book = model('Book', BookSchema);
+
+module.exports = Book; 

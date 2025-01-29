@@ -7,10 +7,33 @@ const BookSchema = new Schema({
     },
     Author: {
         type: String,
-        required: true,
+    },
+    genre: {
+        type: String,
+    },
+    publicationYear: {
+        type: Number,
+    },
+    ISBN: {
+        type: String,
     },
     Borrower: {
         type: Types.ObjectId,
         ref: 'User',
     },
-});
+    availableCopies:{
+        type: Number,
+        default: 1,
+    },
+    totalCopies:{
+        type: Number,
+        default: 1,
+    },
+    reviews: [{
+        type: Types.ObjectId,
+        ref: 'Review',
+    }],
+
+},{ timestamps:true });
+
+module.exports = model('Book', BookSchema)

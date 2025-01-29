@@ -2,7 +2,9 @@ const router = require('express').Router();
 const { 
         getUsers, getUserById, 
         createUser, updateUser, 
-        deleteUser
+        deleteUser,
+        borrowBook,
+        returnBook
     } = require('../../controllers/user-controller');
 
 router.route('/')
@@ -13,5 +15,10 @@ router.route('/:id')
     .get(getUserById)
     .put(updateUser)
     .delete(deleteUser)
+
+router.route('/:id/borrows/:bookId')
+    .put(borrowBook)
+    .delete(returnBook)
+
 
 module.exports = router;

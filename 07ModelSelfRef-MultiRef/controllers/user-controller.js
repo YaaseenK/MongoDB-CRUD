@@ -1,5 +1,6 @@
 const { isValidObjectId } = require('mongoose');
-const User = require('../models/user-model');
+const {User, Book} = require('../models/model-index');
+
 
 module.exports = {
     async getUsers(req, res) {  
@@ -79,7 +80,7 @@ module.exports = {
         }
 
         try {
-            const deleteUser = await User.fineOneAndDelete( { _id : userId})
+            const deleteUser = await User.findOneAndDelete( { _id : userId})
             if(!deleteUser){
                 return res.status(404).json({message: 'No user found with that ID'})
             }
@@ -87,5 +88,55 @@ module.exports = {
         } catch (err) {
             res.status(500).json({ message: err.message});
         }
-    }
+    },
+
+    async borrowBook ({params}, res) {
+        try {
+            // const user = await User.findById(params.id);
+            const UserID = params.id;
+            const BookID = params.bookId;
+            const book = await Book.findByIdAndUpdate(BookID,
+                { $addToSet: { borrower: UserID}},
+                { $inc: { availableCopies: -1}},
+                { new: true}
+            );
+            const user = await User.findByIdAndUpdate(UserID,
+                { $addToSet: { borrowedBooks: book}},
+                { new: true}
+            );
+            
+            if (!user) {
+                return res.status(404).json({ message: 'No user found with that ID'})
+            }
+            // Send a success response
+            res.status(200).json({
+                message: "Book successfully borrowed!",
+            });
+
+        } catch (err) {
+            res.status(500).json({ message: err.message})
+        }
+        
+    },
+
+    async returnBook(req, res) {
+        try {
+            const UserID = req.params.id;
+            const BookID = req.params.bookId;
+            const book = await Book.findByIdAndUpdate(
+                BookID,
+                {$pull: {borrower: UserID} },
+                { new: true}
+            )
+            const user = await User.findByIdAndUpdate(
+                UserID,
+                {$pull:{borrowedBooks: BookID}},
+                { new: true},
+            )
+            res.status(200).json({user})
+            }catch(err){
+                res.status(500).json({message: err.message})
+            }
+    
+        }
 }

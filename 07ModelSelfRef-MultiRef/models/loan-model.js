@@ -1,7 +1,7 @@
 const { Schema, Types, model } = require('mongoose');
 
 const LoanSchema = new Schema({
-    user: {
+    username: {
         type: Types.ObjectId, 
         ref: 'User',
         required: true},

@@ -1,14 +1,17 @@
 const { Schema, Types, model } = require('mongoose');
 
 const BookSchema = new Schema({
-    Title: {
+    title: {
         type: String,
         required: true,
     },
-    Author: {
+    author: {
         type: String,
     },
     genre: {
+        type: String,
+    },
+    descrrption: {
         type: String,
     },
     publicationYear: {
@@ -17,7 +20,7 @@ const BookSchema = new Schema({
     ISBN: {
         type: String,
     },
-    Borrower: {
+    borrower: {
         type: Types.ObjectId,
         ref: 'User',
     },

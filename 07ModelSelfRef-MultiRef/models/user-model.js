@@ -1,39 +1,35 @@
 const { Schema, Types, model } = require('mongoose');
 
 const UserSchema = new Schema({
-    Username: {
+    username: {
         type: String,
         required: true,
         unique: true,
     },
-    Role: [{
+    role: {
         type: String,
-        role: { 
-            type: String, 
-            enum: ['member', 'admin'], 
-            default: 'member' 
-        },
-    }],
-    BorrowedBooks:[{
+        enum: ['member', 'admin'],
+        default: 'member',
+    },
+    borrowedBooks: [{
         type: Types.ObjectId,
-        ref: 'Lone'
+        ref: 'Loan'  // Fixed typo from "Lone" to "Loan"
     }],
-    Reviews:[{
+    reviews: [{
         type: Types.ObjectId,
         ref: 'Review'
     }],
-    Friends: [{
+    friends: [{
         type: Types.ObjectId,
         ref: 'User',
     }],
 },
-    {
-        toJSON:{
-            virtuals: true,
-        },
-        id:false,
-    }
-);
+{
+    toJSON: {
+        virtuals: true,
+    },
+    id: false,
+});
 
 const User = model('User', UserSchema);
 

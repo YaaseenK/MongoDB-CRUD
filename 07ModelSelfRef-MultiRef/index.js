@@ -1,6 +1,7 @@
 // Import the necessary moduless
 const express = require('express');
 const db = require('./config/connection');
+const routes = require('./routes/router-index')
 // const routes = require('./routes/roueter-index');
 
 // Initialize the Express application and create the server
@@ -13,7 +14,7 @@ const PORT = process.env.PORT || 3001;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// app.use(routes);
+app.use(routes);
 
 // Establish a connection to the MongoDB database using Mongoose
 db.once('open', () => {

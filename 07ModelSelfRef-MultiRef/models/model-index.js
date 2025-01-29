@@ -3,4 +3,4 @@ const Book  = require('./book-model');
 const Loan  = require('./loan-model');
 const Review  = require('./review-model');
 
-module.exports = { User, Book , Loan };
+module.exports = { User, Book , Loan , Review };

@@ -131,20 +131,30 @@ module.exports = {
         try {
             const UserID = req.params.id;
             const BookID = req.params.bookId;
-            const book = await Book.findByIdAndUpdate(
-                BookID,
-                {
-                    $pull: { borrower: UserID },
-                    $inc: { availableCopies: 1 }
-                },
-                { new: true }
-            )
-            const user = await User.findByIdAndUpdate(
-                UserID,
-                { $pull: { borrowedBooks: BookID } },
-                { new: true },
-            )
-            res.status(200).json({ user })
+            const { borrower, title } = await Book.findById(BookID);
+
+            const isNotBorrowed = UserID == borrower.toString()
+
+            if(isNotBorrowed){
+                const book = await Book.findByIdAndUpdate(
+                    BookID,
+                    {
+                        $pull: { borrower: UserID },
+                        $inc: { availableCopies: 1 }
+                    },
+                    { new: true }
+                )
+                const user = await User.findByIdAndUpdate(
+                    UserID,
+                    { $pull: { borrowedBooks: BookID } },
+                    { new: true },
+                )
+                res.status(200).json({ message: `${title} returned`})
+            }
+            else{
+                res.status(500).json({message: 'Please Sign Book Out First'})
+            }
+
         } catch (err) {
             res.status(500).json({ message: err.message })
         }

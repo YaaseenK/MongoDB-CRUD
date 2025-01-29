@@ -12,7 +12,22 @@ module.exports = {
     },
 
     async createBook (req, res) {
-    try {  const book = await Book.create(req.body);
+        const availableCopies =  req.body.availableCopies
+        const totalCopies =  req.body.totalCopies
+        const checkBook = await Book.findOne({ 
+            title: req.body.title, 
+            author: req.body.author,
+        });
+    try {  
+        if (checkBook) {
+            return res.status(400).json({ message: 'A book with this title and author already exists' });
+        }
+
+        if (availableCopies > totalCopies) {
+            return res.status(400).json({ message: 'Available copies cannot be more than total copies' });
+        }
+
+        const book = await Book.create(req.body);
             res.status(200).json({ book });
         } catch (err) {
             if (err.code === 11000) {

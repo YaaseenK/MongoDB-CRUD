@@ -95,10 +95,11 @@ module.exports = {
         try {
             const UserID = params.id;
             const BookID = params.bookId;
-            const { availableCopies } = await Book.findById(BookID);
-            if (!availableCopies > 0) {
-                res.status(400).json({ message: "Book Unavailable" })
-            } else {
+            const { availableCopies, title } = await Book.findById(BookID);
+            const { borrowedBooks } = await User.findById(UserID);
+            const isDifBook = BookID !== borrowedBooks.toString();
+            const isAvailable = availableCopies > 0;
+            if (isAvailable && isDifBook) {
                 const book = await Book.findByIdAndUpdate(BookID,
                     {
                         $addToSet: { borrower: UserID },
@@ -106,7 +107,6 @@ module.exports = {
                     },
                     { new: true }
                 );
-
                 const user = await User.findByIdAndUpdate(UserID,
                     { $addToSet: { borrowedBooks: book } },
                     { new: true }
@@ -114,8 +114,10 @@ module.exports = {
 
                 // Send a success response
                 res.status(200).json({
-                    message: `${book.title} successfully borrowed!`,
+                    message: `${title} successfully borrowed!`,
                 });
+            } else {
+                res.status(400).json({ message: "Error: Unable to borrow book" })
             }
 
 

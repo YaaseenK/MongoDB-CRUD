@@ -20,15 +20,15 @@ const BookSchema = new Schema({
     ISBN: {
         type: String,
     },
-    borrower: {
+    borrower: [{
         type: Types.ObjectId,
         ref: 'User',
-    },
-    availableCopies:{
+    }],
+    availableCopies: {
         type: Number,
         default: 1,
     },
-    totalCopies:{
+    totalCopies: {
         type: Number,
         default: 1,
     },
@@ -36,9 +36,8 @@ const BookSchema = new Schema({
         type: Types.ObjectId,
         ref: 'Review',
     }],
-
-},{ timestamps:true });
+}, { timestamps: true });
 
 const Book = model('Book', BookSchema);
 
-module.exports = Book; 
+module.exports = Book;

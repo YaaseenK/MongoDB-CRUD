@@ -129,35 +129,37 @@ module.exports = {
 
     async returnBook(req, res) {
         try {
-            const UserID = req.params.id;
-            const BookID = req.params.bookId;
-            const { borrower, title } = await Book.findById(BookID);
+            const { id: UserID, bookId: BookID } = req.params;
 
-            const isNotBorrowed = UserID == borrower.toString()
-
-            if(isNotBorrowed){
-                const book = await Book.findByIdAndUpdate(
-                    BookID,
-                    {
-                        $pull: { borrower: UserID },
-                        $inc: { availableCopies: 1 }
-                    },
-                    { new: true }
-                )
-                const user = await User.findByIdAndUpdate(
-                    UserID,
-                    { $pull: { borrowedBooks: BookID } },
-                    { new: true },
-                )
-                res.status(200).json({ message: `${title} returned`})
-            }
-            else{
-                res.status(500).json({message: 'Please Sign Book Out First'})
+            const book = await Book.findById(BookID);
+            if (!book) {
+            return res.status(404).json({ message: 'Book not found' });
             }
 
+            const { borrower, title } = book;
+            if (!Array.isArray(borrower) || !borrower.includes(UserID)) {
+            return res.status(400).json({ message: 'This book was not borrowed by you' });
+            }
+
+            await Book.findByIdAndUpdate(
+            BookID,
+            {
+                $pull: { borrower: UserID },
+                $inc: { availableCopies: 1 }
+            },
+            { new: true }
+            );
+
+            await User.findByIdAndUpdate(
+            UserID,
+            { $pull: { borrowedBooks: BookID } },
+            { new: true }
+            );
+
+            res.status(200).json({ message: `${title} returned` });
         } catch (err) {
-            res.status(500).json({ message: err.message })
+            res.status(500).json({ message: err.message });
         }
-
     }
+    
 }
